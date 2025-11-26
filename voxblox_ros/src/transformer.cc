@@ -22,7 +22,7 @@ Transformer::Transformer(rclcpp::Node::SharedPtr node)
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(node_->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  const double kNanoSecondsInSecond = 1.0e9;
+  constexpr double kNanoSecondsInSecond = 1.0e9;
   double timestamp_tolerance_sec =
       timestamp_tolerance_ns_ / kNanoSecondsInSecond;
   timestamp_tolerance_sec = node_->declare_parameter("timestamp_tolerance_sec",
@@ -55,7 +55,7 @@ Transformer::Transformer(rclcpp::Node::SharedPtr node)
 void Transformer::get_transformation_parameter(
     std::string transformation_parameter_name,
     std::string invert_parameter_name, Transformation& transformation) {
-  transformation = ros_parameters::get_parameter_as_transformation(
+  transformation = get_parameter_as_transformation(
       node_, transformation_parameter_name);
   bool invert_T_B_D = node_->declare_parameter(invert_parameter_name, false);
   if (invert_T_B_D) {

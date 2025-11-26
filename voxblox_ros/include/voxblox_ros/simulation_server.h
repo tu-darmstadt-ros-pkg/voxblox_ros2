@@ -4,7 +4,9 @@
 #include <memory>
 #include <string>
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 #include <voxblox/core/esdf_map.h>
 #include <voxblox/core/tsdf_map.h>
@@ -18,16 +20,15 @@
 #include "voxblox_ros/conversions.h"
 #include "voxblox_ros/mesh_vis.h"
 #include "voxblox_ros/ptcloud_vis.h"
-#include "voxblox_ros/ros_params.h"
+#include "voxblox_ros/ros_parameters.hpp"
 
 namespace voxblox {
 
 class SimulationServer {
  public:
-  SimulationServer(const ros::NodeHandle& nh,
-                   const ros::NodeHandle& nh_private);
+  explicit SimulationServer(const rclcpp::Node::SharedPtr& node);
 
-  SimulationServer(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private,
+  SimulationServer(const rclcpp::Node::SharedPtr& node,
                    const EsdfMap::Config& esdf_config,
                    const EsdfIntegrator::Config& esdf_integrator_config,
                    const TsdfMap::Config& tsdf_config,
@@ -51,24 +52,25 @@ class SimulationServer {
   void visualize();
 
  protected:
-  void getServerConfigFromRosParam(const ros::NodeHandle& nh_private);
+  void getServerConfigFromRosParam(const rclcpp::Node::SharedPtr& node);
 
   /// Convenience function to generate valid viewpoints.
   bool generatePlausibleViewpoint(FloatingPoint min_distance, Point* ray_origin,
                                   Point* ray_direction) const;
 
-  ros::NodeHandle nh_;
-  ros::NodeHandle nh_private_;
+  rclcpp::Node::SharedPtr node_;
 
   // A bunch of publishers :)
-  ros::Publisher sim_pub_;
-  ros::Publisher tsdf_gt_pub_;
-  ros::Publisher esdf_gt_pub_;
-  ros::Publisher tsdf_gt_mesh_pub_;
-  ros::Publisher tsdf_test_pub_;
-  ros::Publisher esdf_test_pub_;
-  ros::Publisher tsdf_test_mesh_pub_;
-  ros::Publisher view_ptcloud_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr sim_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr tsdf_gt_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr esdf_gt_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+      tsdf_gt_mesh_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr tsdf_test_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr esdf_test_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
+      tsdf_test_mesh_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr view_ptcloud_pub_;
 
   // Settings
   FloatingPoint voxel_size_;
@@ -94,14 +96,14 @@ class SimulationServer {
   // Actual simulation server.
   std::unique_ptr<SimulationWorld> world_;
 
-  // Maps (GT and generates from sensors) generated here.
-  std::unique_ptr<Layer<TsdfVoxel> > tsdf_gt_;
-  std::unique_ptr<Layer<EsdfVoxel> > esdf_gt_;
+  // Maps (GT and generated from sensors) generated here.
+  std::unique_ptr<Layer<TsdfVoxel>> tsdf_gt_;
+  std::unique_ptr<Layer<EsdfVoxel>> esdf_gt_;
 
   // Generated maps:
-  std::unique_ptr<Layer<TsdfVoxel> > tsdf_test_;
-  std::unique_ptr<Layer<EsdfVoxel> > esdf_test_;
-  std::unique_ptr<Layer<OccupancyVoxel> > occ_test_;
+  std::unique_ptr<Layer<TsdfVoxel>> tsdf_test_;
+  std::unique_ptr<Layer<EsdfVoxel>> esdf_test_;
+  std::unique_ptr<Layer<OccupancyVoxel>> occ_test_;
 
   // Integrators:
   std::unique_ptr<TsdfIntegratorBase> tsdf_integrator_;

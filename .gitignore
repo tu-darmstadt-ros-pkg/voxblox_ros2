@@ -61,3 +61,5 @@ build/
 
 # Large ros bag files
 data/
+
+.idea

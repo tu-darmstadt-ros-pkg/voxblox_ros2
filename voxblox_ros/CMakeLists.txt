@@ -26,6 +26,7 @@ find_package(cv_bridge REQUIRED)
 find_package(voxblox REQUIRED)
 find_package(voxblox_proto REQUIRED)
 find_package(voxblox_msgs REQUIRED)
+find_package(minkindr_conversions REQUIRED)
 
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(glog REQUIRED)
@@ -49,6 +50,7 @@ set(AMENT_DEPENDENCIES
     pcl_conversions
     tf2_eigen
     tf2_eigen_kdl
+    minkindr_conversions
 
     glog
     Eigen3
@@ -67,6 +69,7 @@ ament_auto_add_library(${PROJECT_NAME}
   src/esdf_server.cc
   src/interactive_slider.cc
   src/intensity_server.cc
+  src/simulation_server.cc
   src/transformer.cc
   src/tsdf_server.cc
 )
@@ -109,6 +112,11 @@ ament_auto_add_executable(intensity_server
   src/intensity_server_node.cc
 )
 target_link_libraries(intensity_server ${PROJECT_NAME})
+
+ament_auto_add_executable(simulation_eval
+        src/simulation_eval.cc
+)
+target_link_libraries(simulation_eval ${PROJECT_NAME})
 
 ament_auto_add_executable(visualize_tsdf
   src/visualize_tsdf.cc

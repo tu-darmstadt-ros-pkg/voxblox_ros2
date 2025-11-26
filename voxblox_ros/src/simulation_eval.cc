@@ -7,7 +7,7 @@
 namespace voxblox {
 class SimulationServerImpl : public voxblox::SimulationServer {
  public:
-  SimulationServerImpl() : SimulationServer() {}
+  SimulationServerImpl(rclcpp::Node::SharedPtr node) : SimulationServer(node) {}
 
   void prepareWorld() {
     CHECK_NOTNULL(world_);
@@ -37,12 +37,12 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   // google::ParseCommandLineFlags(&argc, &argv, false);
   google::InstallFailureSignalHandler();
+  auto node = rclcpp::Node::make_shared("simulation_eval_node");
+  auto sim_eval = std::make_shared<voxblox::SimulationServerImpl>(node);
+  sim_eval->run();
 
-  auto sim_eval = std::make_shared<voxblox::SimulationServerImpl>();
-  sim_eval.run();
+  RCLCPP_INFO(node->get_logger(), "Done.");
 
-  RCLCPP_INFO(sim_eval->get_logger(), "Done.");
-
-  rclcpp::spin(sim_eval);
+  rclcpp::spin(node);
   return 0;
 }
