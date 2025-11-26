@@ -1,6 +1,6 @@
-# Voxblox
+# Voxblox for ROS2
 
-[![Build Test](https://github.com/ethz-asl/voxblox/actions/workflows/build_test.yml/badge.svg)](https://github.com/ethz-asl/voxblox/actions/workflows/build_test.yml)
+[![Build Test](https://https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yml/badge.svg)](https://https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yml)
 
 ![voxblox_small](https://cloud.githubusercontent.com/assets/5616392/15180357/536a8776-1781-11e6-8c1d-f2dfa34b1408.gif)
 
@@ -28,16 +28,17 @@ A Dockerfile is also available for getting started quickly.
 The code of the following Voxblox executables and their dependencies have been migrated to ROS2:
 
 - [x] tsdf_server_node
-- [ ] esdf_server_node
-- [ ] intensity_server_node
-- [ ] visualize_tsdf
-- [ ] voxblox_eval
+- [x] esdf_server_node
+- [x] intensity_server_node
+- [x] visualize_tsdf
+- [x] voxblox_eval
 
 The following work still needs to be completed:
 
-- [ ] Migrate remaining executables to ROS2
-- [ ] Migrate tests to ROS2
+- [x] Migrate remaining executables to ROS2
+- [x] Migrate tests to ROS2
 - [ ] Update documentation for ROS2
+  - See "https://voxblox.readthedocs.io" ros1 documentation for reference (only minimal changes expected)
 
 # Documentation
 * All voxblox documentation can be found on [our readthedocs page](https://voxblox.readthedocs.io/en/latest/index.html)
