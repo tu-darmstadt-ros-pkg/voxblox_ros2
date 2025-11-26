@@ -18,6 +18,7 @@
   <depend>libgoogle-glog-dev</depend>
   <depend>minkindr</depend>
   <depend>protobuf</depend>
+  <depend>protobuf-dev</depend>
   <depend>rosidl_default_generators</depend>
 
   <export>
