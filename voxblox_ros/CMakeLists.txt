@@ -65,7 +65,7 @@ set(OTHER_DEPENDENCIES
 #############
 
 ament_auto_add_library(${PROJECT_NAME}
-  # src/esdf_server.cc
+  src/esdf_server.cc
   # src/interactive_slider.cc
   # src/intensity_server.cc
   src/transformer.cc
@@ -100,12 +100,12 @@ target_link_libraries(tsdf_server
 )
 
 # # ESDF_SERVER:
-# ament_auto_add_executable(esdf_server
-#   src/esdf_server_node.cc
-# )
-# target_link_libraries(esdf_server 
-#   ${PROJECT_NAME}
-# )
+ament_auto_add_executable(esdf_server
+  src/esdf_server_node.cc
+)
+target_link_libraries(esdf_server
+  ${PROJECT_NAME}
+)
 
 # ament_auto_add_executable(intensity_server
 #   src/intensity_server_node.cc

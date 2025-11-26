@@ -16,7 +16,7 @@ class EsdfServer : public TsdfServer {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  EsdfServer();
+  EsdfServer(rclcpp::Node::SharedPtr node);
   virtual ~EsdfServer() {}
 
   bool generateEsdfCallback(
@@ -81,22 +81,22 @@ class EsdfServer : public TsdfServer {
         this->tsdf_integrator_config.default_truncation_distance / 2.0;
 
     esdf_integrator_config.full_euclidean_distance =
-        this->declare_parameter("esdf_euclidean_distance",
+        node_->declare_parameter("esdf_euclidean_distance",
                                 esdf_integrator_config.full_euclidean_distance);
-    esdf_integrator_config.max_distance_m = this->declare_parameter(
+    esdf_integrator_config.max_distance_m = node_->declare_parameter(
         "esdf_max_distance_m", esdf_integrator_config.max_distance_m);
-    esdf_integrator_config.min_distance_m = this->declare_parameter(
+    esdf_integrator_config.min_distance_m = node_->declare_parameter(
         "esdf_min_distance_m", esdf_integrator_config.min_distance_m);
-    esdf_integrator_config.default_distance_m = this->declare_parameter(
+    esdf_integrator_config.default_distance_m = node_->declare_parameter(
         "esdf_default_distance_m", esdf_integrator_config.default_distance_m);
-    esdf_integrator_config.min_diff_m = this->declare_parameter(
+    esdf_integrator_config.min_diff_m = node_->declare_parameter(
         "esdf_min_diff_m", esdf_integrator_config.min_diff_m);
-    esdf_integrator_config.clear_sphere_radius = this->declare_parameter(
+    esdf_integrator_config.clear_sphere_radius = node_->declare_parameter(
         "clear_sphere_radius", esdf_integrator_config.clear_sphere_radius);
     esdf_integrator_config.occupied_sphere_radius =
-        this->declare_parameter("occupied_sphere_radius",
+        node_->declare_parameter("occupied_sphere_radius",
                                 esdf_integrator_config.occupied_sphere_radius);
-    esdf_integrator_config.add_occupied_crust = this->declare_parameter(
+    esdf_integrator_config.add_occupied_crust = node_->declare_parameter(
         "esdf_add_occupied_crust", esdf_integrator_config.add_occupied_crust);
 
     if (esdf_integrator_config.default_distance_m <

@@ -1,0 +1,73 @@
+launch:
+  - arg:
+      name: namespace
+      default: "/athena"
+  - push_ros_namespace:
+      namespace: "$(var namespace)"
+  - node:
+      pkg: voxblox_ros
+      exec: esdf_server
+      name: esdf_server
+      output: screen
+      respawn: "true"
+
+      param:
+        - name: world_frame
+          value: world
+        - name: publish_esdf_map
+          value: true
+        - name: update_mesh_every_n_sec
+          value: 1.0
+
+        - name: publish_esdf_info
+          value: true
+        - name: min_time_between_msgs_sec
+          value: 0.0
+        - name: verbose
+          value: false
+        - name: color_mode
+          value: color
+        - name: method
+          value: fast        # simple, fast, merged
+        - name: publish_pointclouds
+          value: true
+
+        - name: esdf_voxel_size
+          value: 0.05
+        - name: esdf_voxels_per_side
+          value: 16
+        - name: voxel_carving_enabled
+          value: true
+        - name: truncation_distance
+          value: 0.4
+
+        - name: publish_slices
+          value: true
+        - name: min_ray_length_m
+          value: 0.3
+
+      remap:
+        - from: pointcloud
+          to: back_rgbd/points
+        - from: /tf
+          to: /athena/tf
+        - from: /tf_static
+          to: /athena/tf_static
+
+  - node:
+      pkg: depth_image_proc
+      exec: point_cloud_xyzrgb_node
+      name: back_rgbd_point_cloud
+      output: screen
+      respawn: "true"
+
+
+      remap:
+        - from: depth_registered/image_rect
+          to: back_rgbd/depth/image_raw
+        - from: rgb/image_rect_color
+          to: back_rgbd/color/image_raw
+        - from: rgb/camera_info
+          to: back_rgbd/color/camera_info
+        - from: points
+          to: back_rgbd/points

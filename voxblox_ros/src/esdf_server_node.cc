@@ -7,8 +7,8 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   // google::ParseCommandLineFlags(&argc, &argv, false);
   google::InstallFailureSignalHandler();
-
-  voxblox::EsdfServer::SharedPtr node = std::make_shared<voxblox::EsdfServer>();
+  auto node = std::make_shared<rclcpp::Node>("esdf_server");
+  auto esdf_server = std::make_shared<voxblox::EsdfServer>(node);
   rclcpp::spin(node);
   return 0;
 }

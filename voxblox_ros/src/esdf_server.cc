@@ -1,11 +1,15 @@
+#include <memory>
+
+#include <memory>
+
 #include "voxblox_ros/esdf_server.h"
 
 #include "voxblox_ros/conversions.h"
 
 namespace voxblox {
 
-EsdfServer::EsdfServer()
-    : TsdfServer(),
+EsdfServer::EsdfServer(rclcpp::Node::SharedPtr node)
+    : TsdfServer(node),
       clear_sphere_for_planning_(false),
       publish_esdf_map_(false),
       publish_traversable_(false),
@@ -17,52 +21,52 @@ EsdfServer::EsdfServer()
       getEsdfIntegratorConfigFromRosParam();
 
   // Set up map and integrator.
-  esdf_map_.reset(new EsdfMap(esdf_config));
-  esdf_integrator_.reset(new EsdfIntegrator(esdf_integrator_config,
+  esdf_map_ = std::make_shared<EsdfMap>(esdf_config);
+  esdf_integrator_ = std::make_unique<EsdfIntegrator>(esdf_integrator_config,
                                             tsdf_map_->getTsdfLayerPtr(),
-                                            esdf_map_->getEsdfLayerPtr()));
+                                            esdf_map_->getEsdfLayerPtr());
 
   setupRos();
 }
 
 void EsdfServer::setupRos() {
   // Set up publisher.
-  esdf_pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
+  esdf_pointcloud_pub_ = node_->create_publisher<sensor_msgs::msg::PointCloud2>(
       "esdf_pointcloud", 1);
   esdf_slice_pub_ =
-      this->create_publisher<sensor_msgs::msg::PointCloud2>("esdf_slice", 1);
+      node_->create_publisher<sensor_msgs::msg::PointCloud2>("esdf_slice", 1);
   traversable_pub_ =
-      this->create_publisher<sensor_msgs::msg::PointCloud2>("traversable", 1);
+      node_->create_publisher<sensor_msgs::msg::PointCloud2>("traversable", 1);
 
   esdf_map_pub_ =
-      this->create_publisher<voxblox_msgs::msg::Layer>("esdf_map_out", 1);
+      node_->create_publisher<voxblox_msgs::msg::Layer>("esdf_map_out", 1);
 
   // Set up subscriber.
-  esdf_map_sub_ = this->create_subscription<voxblox_msgs::msg::Layer>(
+  esdf_map_sub_ = node_->create_subscription<voxblox_msgs::msg::Layer>(
       "esdf_map_in", 1,
       std::bind(&EsdfServer::esdfMapCallback, this, std::placeholders::_1));
 
   // Whether to clear each new pose as it comes in, and then set a sphere
   // around it to occupied.
-  clear_sphere_for_planning_ = this->declare_parameter(
+  clear_sphere_for_planning_ = node_->declare_parameter(
       "clear_sphere_for_planning", clear_sphere_for_planning_);
   publish_esdf_map_ =
-      this->declare_parameter("publish_esdf_map", publish_esdf_map_);
+      node_->declare_parameter("publish_esdf_map", publish_esdf_map_);
 
   // Special output for traversable voxels. Publishes all voxels with distance
   // at least traversibility radius.
   publish_traversable_ =
-      this->declare_parameter("publish_traversable", publish_traversable_);
+      node_->declare_parameter("publish_traversable", publish_traversable_);
   traversability_radius_ =
-      this->declare_parameter("traversability_radius", traversability_radius_);
+      node_->declare_parameter("traversability_radius", traversability_radius_);
 
   double update_esdf_every_n_sec = 1.0;
-  update_esdf_every_n_sec = this->declare_parameter("update_esdf_every_n_sec",
+  update_esdf_every_n_sec = node_->declare_parameter("update_esdf_every_n_sec",
                                                     update_esdf_every_n_sec);
 
   if (update_esdf_every_n_sec > 0.0) {
     update_esdf_timer_ = rclcpp::create_timer(
-        this, this->get_clock(),
+        node_, node_->get_clock(),
         rclcpp::Duration::from_seconds(update_esdf_every_n_sec),
         std::bind(&EsdfServer::updateEsdfEvent, this));
   }
@@ -146,7 +150,7 @@ void EsdfServer::publishMap(bool reset_remote_map) {
     return;
   }
 
-  int subscribers = this->esdf_map_pub_->get_subscription_count();
+  int subscribers = esdf_map_pub_->get_subscription_count();
   if (subscribers > 0) {
     if (num_subscribers_esdf_map_ < subscribers) {
       // Always reset the remote map and send all when a new subscriber
@@ -157,12 +161,12 @@ void EsdfServer::publishMap(bool reset_remote_map) {
     const bool only_updated = !reset_remote_map;
     timing::Timer publish_map_timer("map/publish_esdf");
     voxblox_msgs::msg::Layer layer_msg;
-    serializeLayerAsMsg<EsdfVoxel>(this->esdf_map_->getEsdfLayer(),
+    serializeLayerAsMsg<EsdfVoxel>(esdf_map_->getEsdfLayer(),
                                    only_updated, &layer_msg);
     if (reset_remote_map) {
       layer_msg.action = static_cast<uint8_t>(MapDerializationAction::kReset);
     }
-    this->esdf_map_pub_->publish(layer_msg);
+    esdf_map_pub_->publish(layer_msg);
     publish_map_timer.Stop();
   }
   num_subscribers_esdf_map_ = subscribers;
@@ -238,10 +242,10 @@ void EsdfServer::esdfMapCallback(
       deserializeMsgToLayer<EsdfVoxel>(layer_msg, esdf_map_->getEsdfLayerPtr());
 
   if (!success) {
-    RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 10,
+    RCLCPP_ERROR_THROTTLE(node_->get_logger(), *node_->get_clock(), 10,
                           "Got an invalid ESDF map message!");
   } else {
-    RCLCPP_INFO_ONCE(this->get_logger(), "Got an ESDF map from ROS topic!");
+    RCLCPP_INFO_ONCE(node_->get_logger(), "Got an ESDF map from ROS topic!");
     if (publish_pointclouds_) {
       publishPointclouds();
     }

@@ -37,8 +37,8 @@ class TsdfServer {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  TsdfServer(rclcpp::Node::SharedPtr node);
-  virtual ~TsdfServer() {}
+  explicit TsdfServer(rclcpp::Node::SharedPtr node);
+  virtual ~TsdfServer() = default;
 
   void getServerConfigFromRosParam();
 
