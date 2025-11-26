@@ -30,13 +30,13 @@ QT5_WRAP_CPP(MOC_FILES
 ## Avoid Qt signals and slots defining "emit", "slots", etc.
 add_definitions(-DQT_NO_KEYWORDS)
 
-set(HEADER_FILES 
-  include/voxblox_rviz_plugin/voxblox_mesh_display.h 
+set(HEADER_FILES
+  include/voxblox_rviz_plugin/voxblox_mesh_display.h
   include/voxblox_rviz_plugin/voxblox_mesh_visual.h
 )
 
-set(SRC_FILES 
-  src/voxblox_mesh_display.cc 
+set(SRC_FILES
+  src/voxblox_mesh_display.cc
   src/voxblox_mesh_visual.cc
 )
 
@@ -47,7 +47,7 @@ add_library(${PROJECT_NAME}
   ${MOC_FILES}
 )
 
-ament_target_dependencies(${PROJECT_NAME} 
+ament_target_dependencies(${PROJECT_NAME}
   voxblox
   voxblox_msgs
   rviz_common
@@ -114,4 +114,3 @@ install(
 )
 
 ament_auto_package()
-

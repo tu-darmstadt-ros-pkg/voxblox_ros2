@@ -55,8 +55,8 @@ Transformer::Transformer(rclcpp::Node::SharedPtr node)
 void Transformer::get_transformation_parameter(
     std::string transformation_parameter_name,
     std::string invert_parameter_name, Transformation& transformation) {
-  transformation = get_parameter_as_transformation(
-      node_, transformation_parameter_name);
+  transformation =
+      get_parameter_as_transformation(node_, transformation_parameter_name);
   bool invert_T_B_D = node_->declare_parameter(invert_parameter_name, false);
   if (invert_T_B_D) {
     transformation = transformation.inverse();

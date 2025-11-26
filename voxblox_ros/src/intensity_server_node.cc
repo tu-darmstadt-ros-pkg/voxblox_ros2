@@ -8,8 +8,7 @@ int main(int argc, char** argv) {
   // google::ParseCommandLineFlags(&argc, &argv, false);
   google::InstallFailureSignalHandler();
   auto node = std::make_shared<rclcpp::Node>("intensity_server_node");
-  auto intensity_server =
-      std::make_shared<voxblox::IntensityServer>(node);
+  auto intensity_server = std::make_shared<voxblox::IntensityServer>(node);
   rclcpp::spin(node);
   return 0;
 }

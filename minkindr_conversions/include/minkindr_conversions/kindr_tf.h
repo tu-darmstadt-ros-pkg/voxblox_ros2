@@ -9,38 +9,36 @@
 #include <Eigen/Geometry>
 
 #include <glog/logging.h>
-#include <tf2_eigen/tf2_eigen.hpp> // #include <tf_conversions/tf_eigen.h>
+#include <tf2_eigen/tf2_eigen.hpp>  // #include <tf_conversions/tf_eigen.h>
 
-namespace tf_conversions{
+namespace tf_conversions {
 
-  inline void quaternionTFToEigen(const tf2::Quaternion& t, Eigen::Quaterniond& e)
-  {
-    e = Eigen::Quaterniond(t[3],t[0],t[1],t[2]);
-  }
-
-  inline void quaternionEigenToTF(const Eigen::Quaterniond& e, tf2::Quaternion& t)
-  {
-    t[0] = e.x();
-    t[1] = e.y();
-    t[2] = e.z();
-    t[3] = e.w();
-  }
-
-  inline void vectorTFToEigen(const tf2::Vector3& t, Eigen::Vector3d& e)
-  {
-    e(0) = t[0];
-    e(1) = t[1];
-    e(2) = t[2];
-  }
-
-  inline void vectorEigenToTF(const Eigen::Vector3d& e, tf2::Vector3& t)
-  {
-    t[0] = e(0);
-    t[1] = e(1);
-    t[2] = e(2);
-  }
-
+inline void quaternionTFToEigen(const tf2::Quaternion& t,
+                                Eigen::Quaterniond& e) {
+  e = Eigen::Quaterniond(t[3], t[0], t[1], t[2]);
 }
+
+inline void quaternionEigenToTF(const Eigen::Quaterniond& e,
+                                tf2::Quaternion& t) {
+  t[0] = e.x();
+  t[1] = e.y();
+  t[2] = e.z();
+  t[3] = e.w();
+}
+
+inline void vectorTFToEigen(const tf2::Vector3& t, Eigen::Vector3d& e) {
+  e(0) = t[0];
+  e(1) = t[1];
+  e(2) = t[2];
+}
+
+inline void vectorEigenToTF(const Eigen::Vector3d& e, tf2::Vector3& t) {
+  t[0] = e(0);
+  t[1] = e(1);
+  t[2] = e(2);
+}
+
+}  // namespace tf_conversions
 
 namespace tf2 {
 
@@ -73,7 +71,6 @@ void quaternionKindrToTF(const Eigen::Quaternion<Scalar>& kindr,
 template <typename Scalar>
 void quaternionTFToKindr(const tf2::Quaternion& tf_type,
                          Eigen::Quaternion<Scalar>* kindr) {
-
   CHECK_NOTNULL(kindr);
   Eigen::Quaterniond kindr_double;
   tf_conversions::quaternionTFToEigen(tf_type, kindr_double);
@@ -97,7 +94,8 @@ void vectorTFToKindr(const tf2::Vector3& tf_type,
   *kindr = kindr_double.cast<Scalar>();
 }
 
-// Convert a kindr::minimal::QuatTransformation to a geometry_msgs::msg::Transform.
+// Convert a kindr::minimal::QuatTransformation to a
+// geometry_msgs::msg::Transform.
 template <typename Scalar>
 void transformKindrToTF(
     const kindr::minimal::QuatTransformationTemplate<Scalar>& kindr,

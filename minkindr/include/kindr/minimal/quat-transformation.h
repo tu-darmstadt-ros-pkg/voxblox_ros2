@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -27,8 +27,8 @@
 
 #include <ostream>
 
-#include <kindr/minimal/rotation-quaternion.h>
 #include <kindr/minimal/position.h>
+#include <kindr/minimal/rotation-quaternion.h>
 
 namespace kindr {
 namespace minimal {
@@ -49,7 +49,7 @@ template <typename Scalar>
 class QuatTransformationTemplate {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  
+
   typedef Eigen::Matrix<Scalar, 3, 1> Vector3;
   typedef Eigen::Matrix<Scalar, 4, 1> Vector4;
   typedef Eigen::Matrix<Scalar, 6, 1> Vector6;
@@ -70,8 +70,8 @@ class QuatTransformationTemplate {
   explicit QuatTransformationTemplate(
       const typename Rotation::Implementation& q_A_B, const Position& A_t_A_B);
 
-  explicit QuatTransformationTemplate(
-      const Position& A_t_A_B, const Rotation& q_A_B);
+  explicit QuatTransformationTemplate(const Position& A_t_A_B,
+                                      const Rotation& q_A_B);
   explicit QuatTransformationTemplate(
       const Position& A_t_A_B, const typename Rotation::Implementation& q_A_B);
 
@@ -92,8 +92,10 @@ class QuatTransformationTemplate {
   /// \brief set to random transformation with a given translation norm.
   QuatTransformationTemplate<Scalar>& setRandom(Scalar norm_translation);
 
-  /// \brief set to random transformation with a given translation norm and rotation angle.
-  QuatTransformationTemplate<Scalar>& setRandom(Scalar norm_translation, Scalar angle_rad);
+  /// \brief set to random transformation with a given translation norm and
+  /// rotation angle.
+  QuatTransformationTemplate<Scalar>& setRandom(Scalar norm_translation,
+                                                Scalar angle_rad);
 
   /// \brief get the position component.
   Position& getPosition();
@@ -150,7 +152,8 @@ class QuatTransformationTemplate {
 
   /// \brief get the exponential map of the parameters, resulting in a valid
   /// transformation note: this is the exp map of SO(3)xR(3) and not SE(3)
-  /// \param[in] vec vector form of log map with first 3 components the translational
+  /// \param[in] vec vector form of log map with first 3 components the
+  /// translational
   ///                part and the last three the rotational part.
   /// \return The corresponding Transformation.
   static QuatTransformationTemplate<Scalar> exp(const Vector6& vec);
@@ -165,15 +168,16 @@ class QuatTransformationTemplate {
   QuatTransformationTemplate<Scalar> inverse() const;
 
   /// \deprecated use inverse() instead.
-  QuatTransformationTemplate<Scalar> inverted() const __attribute__((deprecated));
+  QuatTransformationTemplate<Scalar> inverted() const
+      __attribute__((deprecated));
 
   /// \brief check for binary equality.
   bool operator==(const QuatTransformationTemplate<Scalar>& rhs) const;
 
   /// \brief Factory to construct a QuatTransformTemplate from a transformation
   ///        matrix with a near orthonormal rotation matrix.
-  static QuatTransformationTemplate<Scalar>
-  constructAndRenormalizeRotation(const TransformationMatrix& T);
+  static QuatTransformationTemplate<Scalar> constructAndRenormalizeRotation(
+      const TransformationMatrix& T);
 
   /// \brief cast scalar elements to another type
   template <typename ScalarAfterCast>
@@ -193,18 +197,18 @@ class QuatTransformationTemplate {
 
 typedef QuatTransformationTemplate<double> QuatTransformation;
 
-template<typename Scalar>
-std::ostream & operator<<(std::ostream & out,
-                          const QuatTransformationTemplate<Scalar>& pose);
+template <typename Scalar>
+std::ostream& operator<<(std::ostream& out,
+                         const QuatTransformationTemplate<Scalar>& pose);
 
 // Exponential interpolation (i.e., Slerp) in SO(3) and linear interpolation in
 // R3. Lambda is in [0, 1], with 0 returning T_a, and 1 returning T_b.
-template<typename Scalar>
+template <typename Scalar>
 inline QuatTransformationTemplate<Scalar> interpolateComponentwise(
     const QuatTransformationTemplate<Scalar>& T_a,
     const QuatTransformationTemplate<Scalar>& T_b, const double lambda);
-} // namespace minimal
-} // namespace kindr
+}  // namespace minimal
+}  // namespace kindr
 
 #include <kindr/minimal/implementation/quat-transformation-inl.h>
 

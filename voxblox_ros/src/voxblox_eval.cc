@@ -4,14 +4,14 @@
 #include <minkindr_conversions/kindr_msg.h>
 #include <minkindr_conversions/kindr_tf.h>
 #include <minkindr_conversions/kindr_xml.h>
+#include <pcl/common/transforms.h>
 #include <pcl/conversions.h>
 #include <pcl/filters/filter.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/common/transforms.h>
-#include <pcl_ros/transforms.hpp>
 #include <tf2_ros/transform_listener.h>
+#include <pcl_ros/transforms.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <std_srvs/srv/empty.hpp>
@@ -125,8 +125,8 @@ VoxbloxEvaluator::VoxbloxEvaluator(const rclcpp::Node::SharedPtr& node)
 
   // If doing visualizations, initialize the publishers.
   if (visualize_) {
-    mesh_pub_ =
-        node_->create_publisher<visualization_msgs::msg::MarkerArray>("mesh", 1);
+    mesh_pub_ = node_->create_publisher<visualization_msgs::msg::MarkerArray>(
+        "mesh", 1);
     gt_ptcloud_pub_ =
         node_->create_publisher<sensor_msgs::msg::PointCloud2>("gt_ptcloud", 1);
 

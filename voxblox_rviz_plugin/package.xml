@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <package format="3">
   <name>voxblox_rviz_plugin</name>
   <version>0.0.0</version>
@@ -6,13 +6,14 @@
   <maintainer email="ztaylorr@ethz.ch">Zachary Taylor</maintainer>
   <license>BSD</license>
   <author>Zachary Taylor</author>
-  
+
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
-  <depend>rviz_common</depend>
   <depend>pluginlib</depend>
-  
+  <depend>rviz2</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_ogre_vendor</depend>
   <depend>voxblox</depend>
   <depend>voxblox_msgs</depend>
 

@@ -37,8 +37,8 @@ class SimpleTsdfVisualizer {
             "tsdf_voxels_near_surface", 1);
 
     tsdf_pointcloud_pub_ =
-        node_->create_publisher<sensor_msgs::msg::PointCloud2>("all_tsdf_voxels",
-                                                              1);
+        node_->create_publisher<sensor_msgs::msg::PointCloud2>(
+            "all_tsdf_voxels", 1);
 
     mesh_pub_ = node_->create_publisher<voxblox_msgs::msg::Mesh>("mesh", 1);
 
@@ -53,13 +53,13 @@ class SimpleTsdfVisualizer {
 
     tsdf_surface_distance_threshold_factor_ =
         node_->declare_parameter("tsdf_surface_distance_threshold_factor",
-                                tsdf_surface_distance_threshold_factor_);
+                                 tsdf_surface_distance_threshold_factor_);
     tsdf_world_frame_ =
         node_->declare_parameter("tsdf_world_frame", tsdf_world_frame_);
     tsdf_voxel_ply_output_path_ = node_->declare_parameter(
         "tsdf_voxel_ply_output_path", tsdf_voxel_ply_output_path_);
     tsdf_mesh_output_path_ = node_->declare_parameter("tsdf_mesh_output_path",
-                                                     tsdf_mesh_output_path_);
+                                                      tsdf_mesh_output_path_);
 
     std::string color_mode = "color";
     color_mode = node_->declare_parameter("tsdf_mesh_color_mode", color_mode);
@@ -78,8 +78,6 @@ class SimpleTsdfVisualizer {
                           "Undefined mesh coloring mode: " << color_mode);
       rclcpp::shutdown();
     }
-
-
   }
 
   void run(const Layer<TsdfVoxel>& tsdf_layer);
@@ -114,7 +112,8 @@ void SimpleTsdfVisualizer::run(const Layer<TsdfVoxel>& tsdf_layer) {
           << "\t# Allocated blocks:\t "
           << tsdf_layer.getNumberOfAllocatedBlocks() << "\n");
 
-  RCLCPP_DEBUG_STREAM(node_->get_logger(), "\tVisualize voxels near surface...");
+  RCLCPP_DEBUG_STREAM(node_->get_logger(),
+                      "\tVisualize voxels near surface...");
   {
     pcl::PointCloud<pcl::PointXYZI> pointcloud;
     const FloatingPoint surface_distance_thresh_m =
@@ -190,7 +189,7 @@ void SimpleTsdfVisualizer::run(const Layer<TsdfVoxel>& tsdf_layer) {
     if (!tsdf_mesh_output_path_.empty()) {
       if (voxblox::outputMeshLayerAsPly(tsdf_mesh_output_path_, *mesh_layer)) {
         RCLCPP_INFO_STREAM(node_->get_logger(), "Output mesh PLY file to "
-                                                   << tsdf_mesh_output_path_);
+                                                    << tsdf_mesh_output_path_);
       }
     }
   }

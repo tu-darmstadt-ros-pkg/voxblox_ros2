@@ -14,27 +14,28 @@ namespace minimal {
 // kindr::minimal::QuatTransformation.
 template <typename Scalar>
 void vectorOfVectorsToKindr(
-  std::vector<std::vector<double>>& transformation_matrix,
-  kindr::minimal::QuatTransformationTemplate<Scalar>* kindr
-) {
+    std::vector<std::vector<double>>& transformation_matrix,
+    kindr::minimal::QuatTransformationTemplate<Scalar>* kindr) {
   typename kindr::minimal::QuatTransformationTemplate<Scalar>::RotationMatrix
-    temp_rot_matrix;
+      temp_rot_matrix;
   typename kindr::minimal::QuatTransformationTemplate<Scalar>::Position
-    temp_translation;
+      temp_translation;
 
   if (kindr == nullptr) {
     LOG(ERROR) << "Null pointer given";
     return;
   }
   if (transformation_matrix.size() != 4) {
-    LOG(ERROR) << "Transformation matrix has " << transformation_matrix.size() << " rows";
+    LOG(ERROR) << "Transformation matrix has " << transformation_matrix.size()
+               << " rows";
     return;
   }
   // read raw inputs
   for (size_t i = 0; i < 3; ++i) {
     if (transformation_matrix[i].size() != 4) {
-      LOG(ERROR) << "Transformation matrix has " << transformation_matrix[i].size()
-                 << " columns in its " << i << " row";
+      LOG(ERROR) << "Transformation matrix has "
+                 << transformation_matrix[i].size() << " columns in its " << i
+                 << " row";
       return;
     }
     for (size_t j = 0; j < 3; ++j) {

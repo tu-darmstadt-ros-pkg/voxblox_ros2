@@ -23,7 +23,7 @@ Voxblox is a volumetric mapping library based mainly on Truncated Signed Distanc
 
 Voxblox has been partly migrated to ROS2 in the `ros2` git branch.
 The migrated code was tested on Ubuntu 22.04 with ROS2 humble.
-A Dockerfile is also available for getting started quickly. 
+A Dockerfile is also available for getting started quickly.
 
 The code of the following Voxblox executables and their dependencies have been migrated to ROS2:
 
@@ -124,7 +124,7 @@ Only rebuild the modified package for quicker builds:
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug --packages-select voxblox_ros
 ```
 
-## Run 
+## Run
 
 After building the source code, download some rosbag datasets to test Voxblox.
 Remember to source the workspace before running `ros2 launch` or `ros2 run`.
@@ -140,7 +140,7 @@ Voxblox2 was tested with:
 - [VLP16 Lidar Basement dataset](https://projects.asl.ethz.ch/datasets/doku.php?id=basement2018/)
 - ["cow-and-lady" RGBD Dataset with Structure Ground Truth](https://projects.asl.ethz.ch/datasets/doku.php?id=iros2017/)
 
-These datasets are available as ROS1 bag files. 
+These datasets are available as ROS1 bag files.
 For use with Voxblox2 they need to be converted to ROS2 bags using the [rosbags](https://gitlab.com/ternaris/rosbags) package.
 
 Open a terminal in the project directory and run these commands to:
@@ -153,7 +153,7 @@ Open a terminal in the project directory and run these commands to:
 mkdir data
 cd data
 
-python3 -m pip install rosbags 
+python3 -m pip install rosbags
 
 wget -O basement_dataset.bag http://robotics.ethz.ch/~asl-datasets/2018_basement_voxblox/basement_dataset.bag
 rosbags-convert basement_dataset.bag
@@ -181,7 +181,7 @@ This will start the `tsdf_server_node`, `rviz2`, and play the `cow_and_lady_data
 ros2 launch voxblox_ros basement_dataset.launch.py
 ```
 
-### Debug 
+### Debug
 
 Use the `launch.json`` configuration from VS Code and the ROS extensions to debug nodes started with a launch file.
 Ensure the packages you want to debug were built with debug flags, e.g.

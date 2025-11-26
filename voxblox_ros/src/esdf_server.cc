@@ -22,9 +22,9 @@ EsdfServer::EsdfServer(rclcpp::Node::SharedPtr node)
 
   // Set up map and integrator.
   esdf_map_ = std::make_shared<EsdfMap>(esdf_config);
-  esdf_integrator_ = std::make_unique<EsdfIntegrator>(esdf_integrator_config,
-                                            tsdf_map_->getTsdfLayerPtr(),
-                                            esdf_map_->getEsdfLayerPtr());
+  esdf_integrator_ = std::make_unique<EsdfIntegrator>(
+      esdf_integrator_config, tsdf_map_->getTsdfLayerPtr(),
+      esdf_map_->getEsdfLayerPtr());
 
   setupRos();
 }
@@ -62,7 +62,7 @@ void EsdfServer::setupRos() {
 
   double update_esdf_every_n_sec = 1.0;
   update_esdf_every_n_sec = node_->declare_parameter("update_esdf_every_n_sec",
-                                                    update_esdf_every_n_sec);
+                                                     update_esdf_every_n_sec);
 
   if (update_esdf_every_n_sec > 0.0) {
     update_esdf_timer_ = rclcpp::create_timer(
@@ -161,8 +161,8 @@ void EsdfServer::publishMap(bool reset_remote_map) {
     const bool only_updated = !reset_remote_map;
     timing::Timer publish_map_timer("map/publish_esdf");
     voxblox_msgs::msg::Layer layer_msg;
-    serializeLayerAsMsg<EsdfVoxel>(esdf_map_->getEsdfLayer(),
-                                   only_updated, &layer_msg);
+    serializeLayerAsMsg<EsdfVoxel>(esdf_map_->getEsdfLayer(), only_updated,
+                                   &layer_msg);
     if (reset_remote_map) {
       layer_msg.action = static_cast<uint8_t>(MapDerializationAction::kReset);
     }

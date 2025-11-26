@@ -1,6 +1,6 @@
 // Copyright (c) 2015, Autonomous Systems Lab, ETH Zurich
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 //     * Redistributions of source code must retain the above copyright
@@ -11,11 +11,11 @@
 //     * Neither the name of the <organization> nor the
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -32,7 +32,7 @@
 namespace kindr {
 namespace minimal {
 
-template<typename Scalar>
+template <typename Scalar>
 class RotationQuaternionTemplate;
 
 /// \class AngleAxis
@@ -49,13 +49,13 @@ class RotationQuaternionTemplate;
 /// A_v = C_A_B.rotate(B_v);
 /// \endcode
 ///
-template<typename Scalar>
+template <typename Scalar>
 class AngleAxisTemplate {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef Eigen::Matrix<Scalar, 3, 1> Vector3;
-  
+
   typedef Eigen::Matrix<Scalar, 4, 1> Vector4;
 
   typedef Eigen::AngleAxis<Scalar> Implementation;
@@ -68,7 +68,7 @@ class AngleAxisTemplate {
 
   /// \brief initialize from the angle and rotation axis (angle first).
   AngleAxisTemplate(Scalar angle, Scalar v1, Scalar v2, Scalar v3);
-  
+
   /// \brief initialize from the angle and rotation axis.
   AngleAxisTemplate(Scalar angle, const Vector3& axis);
 
@@ -80,7 +80,7 @@ class AngleAxisTemplate {
 
   /// \brief initialize from an Eigen quaternion.
   AngleAxisTemplate(const RotationQuaternionTemplate<Scalar>& quat);
-  
+
   /// \brief initialize from a angle-scaled axis vector.
   AngleAxisTemplate(const Vector3& angleAxis);
 
@@ -159,12 +159,12 @@ class AngleAxisTemplate {
 
 typedef AngleAxisTemplate<double> AngleAxis;
 
-template<typename Scalar>
+template <typename Scalar>
 std::ostream& operator<<(std::ostream& out,
                          const AngleAxisTemplate<Scalar>& rhs);
 
-} // namespace minimal
-} // namespace kindr
+}  // namespace minimal
+}  // namespace kindr
 
 #include <kindr/minimal/implementation/angle-axis-inl.h>
 

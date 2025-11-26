@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <package format="2">
   <name>minkindr_conversions</name>
   <version>0.0.0</version>
@@ -8,18 +8,15 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
-  
+
   <depend>geometry_msgs</depend>
+  <depend>libgflags-dev</depend>
+  <depend>libgoogle-glog-dev</depend>
+  <depend>minkindr</depend>
   <depend>tf2</depend>
   <depend>tf2_eigen</depend>
 
-  <depend>minkindr</depend>
-  
-  <depend>libgflags-dev</depend>
-  <depend>libgoogle-glog-dev</depend>
-  
   <export>
     <build_type>ament_cmake</build_type>
   </export>
-
 </package>

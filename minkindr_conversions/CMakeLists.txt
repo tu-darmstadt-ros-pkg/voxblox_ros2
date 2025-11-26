@@ -10,5 +10,3 @@ find_package(Eigen3 REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_package()
-
-

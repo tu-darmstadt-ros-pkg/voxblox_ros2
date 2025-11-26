@@ -7,7 +7,7 @@ tsdf_server:
       0.0, 1.0, 0.0, 0.0
       0.0, 0.0, 1.0, 0.0
       0.0, 0.0, 0.0, 1.0
-    
+
     invert_T_B_C: false
 
     # actually T_V_C (C = cam0, V = vicon)

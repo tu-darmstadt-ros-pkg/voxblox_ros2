@@ -23,7 +23,8 @@ template <typename Scalar>
 Transformation2DTemplate<Scalar>::Transformation2DTemplate(
     const TransformationMatrix& T)
     : Transformation2DTemplate<Scalar>(
-          Rotation2D().fromRotationMatrix(T.template topLeftCorner<2, 2>().eval()),
+          Rotation2D().fromRotationMatrix(
+              T.template topLeftCorner<2, 2>().eval()),
           T.template topRightCorner<2, 1>().eval()) {
   constexpr Scalar kEpsilon = std::numeric_limits<Scalar>::epsilon();
   CHECK_LE((T(2, 2) - static_cast<Scalar>(1.0)), kEpsilon);
@@ -93,13 +94,13 @@ Eigen::Matrix<Scalar, 3, 1> Transformation2DTemplate<Scalar>::asVector() const {
 template <typename Scalar>
 Transformation2DTemplate<Scalar> Transformation2DTemplate<Scalar>::operator*(
     const Transformation2DTemplate<Scalar>& rhs) const {
-  return Transformation2DTemplate<Scalar>(
-      r_A_B_ * rhs.r_A_B_, A_t_A_B_ + r_A_B_ * rhs.A_t_A_B_);
+  return Transformation2DTemplate<Scalar>(r_A_B_ * rhs.r_A_B_,
+                                          A_t_A_B_ + r_A_B_ * rhs.A_t_A_B_);
 }
 
 template <typename Scalar>
 typename Transformation2DTemplate<Scalar>::Vector2
-    Transformation2DTemplate<Scalar>::operator*(const Vector2& rhs) const {
+Transformation2DTemplate<Scalar>::operator*(const Vector2& rhs) const {
   return transform(rhs);
 }
 
@@ -119,8 +120,8 @@ Transformation2DTemplate<Scalar>::transformVectorized(
 template <typename Scalar>
 Transformation2DTemplate<Scalar> Transformation2DTemplate<Scalar>::inverse()
     const {
-  return Transformation2DTemplate<Scalar>(
-      r_A_B_.inverse(), -(r_A_B_.inverse() * A_t_A_B_));
+  return Transformation2DTemplate<Scalar>(r_A_B_.inverse(),
+                                          -(r_A_B_.inverse() * A_t_A_B_));
 }
 
 template <typename Scalar>
@@ -136,9 +137,9 @@ bool Transformation2DTemplate<Scalar>::operator!=(
 }
 
 template <typename Scalar>
-std::ostream & operator<<(std::ostream & out,
-                          const Transformation2DTemplate<Scalar>& rhs) {
-  out << "[" <<rhs.getRotation().angle() << ", ["
+std::ostream& operator<<(std::ostream& out,
+                         const Transformation2DTemplate<Scalar>& rhs) {
+  out << "[" << rhs.getRotation().angle() << ", ["
       << rhs.getPosition().transpose() << "]]";
   return out;
 }

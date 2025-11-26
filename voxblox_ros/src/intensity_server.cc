@@ -27,8 +27,8 @@ IntensityServer::IntensityServer(rclcpp::Node::SharedPtr node)
 
   FloatingPoint intensity_max_distance =
       intensity_integrator_->getMaxDistance();
-  intensity_max_distance =
-      node_->declare_parameter("intensity_max_distance", intensity_max_distance);
+  intensity_max_distance = node_->declare_parameter("intensity_max_distance",
+                                                    intensity_max_distance);
   intensity_integrator_->setMaxDistance(intensity_max_distance);
 
   // Publishers for output.

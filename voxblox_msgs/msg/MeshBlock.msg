@@ -1,4 +1,4 @@
-# vertex positions rounded to nearest BLOCK_EDGE_LENGTH/65535 
+# vertex positions rounded to nearest BLOCK_EDGE_LENGTH/65535
 # no alpha information
 
 # Index of meshed points in block map

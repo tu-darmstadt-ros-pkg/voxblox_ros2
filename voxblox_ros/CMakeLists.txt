@@ -74,11 +74,11 @@ ament_auto_add_library(${PROJECT_NAME}
   src/tsdf_server.cc
 )
 
-ament_target_dependencies(${PROJECT_NAME} 
+ament_target_dependencies(${PROJECT_NAME}
   ${AMENT_DEPENDENCIES}
 )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
   ${OTHER_DEPENDENCIES}
 )
 
@@ -96,7 +96,7 @@ target_link_libraries(voxblox_eval ${PROJECT_NAME})
 ament_auto_add_executable(tsdf_server
   src/tsdf_server_node.cc
 )
-target_link_libraries(tsdf_server 
+target_link_libraries(tsdf_server
   ${PROJECT_NAME}
 )
 

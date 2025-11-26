@@ -17,7 +17,7 @@ namespace minimal {
 //   0   1  =  0 1 * 0   1
 template <typename Scalar>
 class QuatSimTransformTemplate {
-public:
+ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
   typedef QuatTransformationTemplate<Scalar> Transform;
@@ -52,25 +52,25 @@ public:
 
   inline void setScale(const Scalar scale_A_B) { scale_A_B_ = scale_A_B; }
 
-private:
+ private:
   Transform T_A_B_;
   Scalar scale_A_B_;
 
   template <typename FriendScalar>
-  friend std::ostream & operator<<(
-      std::ostream &, const QuatSimTransformTemplate<FriendScalar>&);
+  friend std::ostream& operator<<(
+      std::ostream&, const QuatSimTransformTemplate<FriendScalar>&);
 };
 
 typedef QuatSimTransformTemplate<double> QuatSimTransform;
 
-template<typename Scalar>
+template <typename Scalar>
 inline QuatSimTransformTemplate<Scalar> operator*(
     const QuatTransformationTemplate<Scalar>& lhs,
     const QuatSimTransformTemplate<Scalar>& rhs);
 
-template<typename Scalar>
-std::ostream & operator<<(std::ostream & out,
-                          const QuatSimTransformTemplate<Scalar>& sim_3);
+template <typename Scalar>
+std::ostream& operator<<(std::ostream& out,
+                         const QuatSimTransformTemplate<Scalar>& sim_3);
 
 }  // namespace minimal
 }  // namespace kindr
