@@ -1,5 +1,5 @@
-#include <eigen-checks/entrypoint.h>
-#include <eigen-checks/gtest.h>
+#include <eigen_checks/entrypoint.h>
+#include <eigen_checks/gtest.h>
 #include <gtest/gtest.h>
 
 #include "voxblox/core/tsdf_map.h"

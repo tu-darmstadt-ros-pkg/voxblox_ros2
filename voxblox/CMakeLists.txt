@@ -90,7 +90,8 @@ target_link_libraries(test_load_esdf ${PROJECT_NAME})
 
 if(BUILD_TESTING)
     find_package(ament_cmake_gtest REQUIRED)
-
+    # see https://github.com/tu-darmstadt-ros-pkg/eigen_checks
+    find_package(eigen_checks REQUIRED)
     # Replicate the test_data target (same commands as before)
     add_custom_target(test_data)
     add_custom_command(TARGET test_data
@@ -102,6 +103,7 @@ if(BUILD_TESTING)
     ament_add_gtest(test_approx_hash_array
             test/test_approx_hash_array.cc
     )
+
     if(TARGET test_approx_hash_array)
         target_link_libraries(test_approx_hash_array ${PROJECT_NAME})
     endif()
@@ -111,6 +113,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_tsdf_map)
         target_link_libraries(test_tsdf_map ${PROJECT_NAME})
+        ament_target_dependencies(test_tsdf_map eigen_checks)
     endif()
 
     ament_add_gtest(test_protobuf
@@ -125,6 +128,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_tsdf_interpolator)
         target_link_libraries(test_tsdf_interpolator ${PROJECT_NAME})
+        ament_target_dependencies(test_tsdf_interpolator eigen_checks)
     endif()
 
     ament_add_gtest(test_layer
@@ -132,6 +136,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_layer)
         target_link_libraries(test_layer ${PROJECT_NAME})
+        ament_target_dependencies(test_layer eigen_checks)
     endif()
 
     ament_add_gtest(test_merge_integration
@@ -139,6 +144,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_merge_integration)
         target_link_libraries(test_merge_integration ${PROJECT_NAME})
+        ament_target_dependencies(test_merge_integration eigen_checks)
     endif()
 
     ament_add_gtest(test_layer_utils
@@ -146,6 +152,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_layer_utils)
         target_link_libraries(test_layer_utils ${PROJECT_NAME})
+        ament_target_dependencies(test_layer_utils eigen_checks)
     endif()
 
     ament_add_gtest(test_sdf_integrators
@@ -153,20 +160,21 @@ if(BUILD_TESTING)
     )
     if(TARGET test_sdf_integrators)
         target_link_libraries(test_sdf_integrators ${PROJECT_NAME})
+        ament_target_dependencies(test_sdf_integrators eigen_checks)
     endif()
 
     ament_add_gtest(test_bucket_queue
             test/test_bucket_queue.cc
     )
     if(TARGET test_bucket_queue)
-        target_link_libraries(test_bucket_queue ${PROJECT_NAME})
+        target_link_libraries(test_bucket_queue ${PROJECT_NAME} )
     endif()
 
     ament_add_gtest(test_clear_spheres
             test/test_clear_spheres.cc
     )
     if(TARGET test_clear_spheres)
-        target_link_libraries(test_clear_spheres ${PROJECT_NAME})
+        target_link_libraries(test_clear_spheres ${PROJECT_NAME} )
     endif()
 
 endif()  # BUILD_TESTING

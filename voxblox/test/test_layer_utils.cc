@@ -1,6 +1,5 @@
-#include <eigen-checks/gtest.h>
+#include <eigen_checks/gtest.h>
 #include <gtest/gtest.h>
-
 #include "voxblox/core/block.h"
 #include "voxblox/core/layer.h"
 #include "voxblox/core/voxel.h"

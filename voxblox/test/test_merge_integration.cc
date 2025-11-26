@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "voxblox/Block.pb.h"
-#include "voxblox/Layer.pb.h"
 #include "voxblox/core/block.h"
 #include "voxblox/core/layer.h"
 #include "voxblox/core/voxel.h"

@@ -22,6 +22,7 @@
   <depend>voxblox_proto</depend>
 
   <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>eigen_checks</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
