@@ -6,12 +6,12 @@
 namespace voxblox {
 
 InteractiveSlider::InteractiveSlider(
-    const std::string& slider_name,
+    rclcpp::Node::SharedPtr node, const std::string& slider_name,
     const std::function<void(const double& slice_level)>& slider_callback,
     const Point& initial_position, const unsigned int free_plane_index,
     const float marker_scale_meters)
     : free_plane_index_(free_plane_index),
-      interactive_marker_server_(slider_name) {
+      interactive_marker_server_(slider_name, node) {
   CHECK(!slider_name.empty());
   CHECK_LT(free_plane_index, 3u);
 
@@ -60,6 +60,8 @@ InteractiveSlider::InteractiveSlider(
       control.orientation.y = 1.0;
   }
   interactive_marker.controls.push_back(control);
+  interactive_marker.name = slider_name;
+  interactive_marker.description = "Move the slider to change slice level.";
 
   // Control for moving the marker in the plane which is orthogonal to the free
   // plane index direction.
@@ -69,10 +71,25 @@ InteractiveSlider::InteractiveSlider(
   interactive_marker.controls.push_back(control);
 
   // Add interactive marker to server.
-  interactive_marker_server_.insert(
-      interactive_marker,
-      std::bind(&InteractiveSlider::interactiveMarkerFeedback, this,
-                std::placeholders::_1, slider_callback));
+  interactive_marker_server_.insert(interactive_marker);
+  auto callback =
+      [&](interactive_markers::InteractiveMarkerServer::FeedbackConstSharedPtr
+              feedback) {
+        if (feedback->event_type ==
+            visualization_msgs::msg::InteractiveMarkerFeedback::POSE_UPDATE) {
+          switch (free_plane_index_) {
+            case 0u:
+              slider_callback(feedback->pose.position.x);
+              break;
+            case 1u:
+              slider_callback(feedback->pose.position.y);
+              break;
+            case 2u:
+              slider_callback(feedback->pose.position.z);
+          }
+        }
+      };
+  interactive_marker_server_.setCallback(slider_name, callback);
   interactive_marker_server_.applyChanges();
 
   // Initial callback.
@@ -85,25 +102,6 @@ InteractiveSlider::InteractiveSlider(
       break;
     case 2u:
       slider_callback(interactive_marker.pose.position.z);
-  }
-}
-
-void InteractiveSlider::interactiveMarkerFeedback(
-    const visualization_msgs::msg::InteractiveMarkerFeedback::SharedPtr&
-        feedback,
-    const std::function<void(const double slice_level)>& slider_callback) {
-  if (feedback->event_type ==
-      visualization_msgs::msg::InteractiveMarkerFeedback::POSE_UPDATE) {
-    switch (free_plane_index_) {
-      case 0u:
-        slider_callback(feedback->pose.position.x);
-        break;
-      case 1u:
-        slider_callback(feedback->pose.position.y);
-        break;
-      case 2u:
-        slider_callback(feedback->pose.position.z);
-    }
   }
 }
 

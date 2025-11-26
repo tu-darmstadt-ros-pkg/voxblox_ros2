@@ -20,7 +20,7 @@ inline void recolorVoxbloxMeshMsgByIntensity(
 
   // Go over all the blocks in the mesh.
   for (voxblox_msgs::msg::MeshBlock& mesh_block : mesh_msg->mesh_blocks) {
-    // Look up verticies in the thermal layer.
+    // Look up vertices in the thermal layer.
     for (size_t vert_idx = 0u; vert_idx < mesh_block.x.size(); ++vert_idx) {
       // only needed if color information was originally missing
       mesh_block.r.resize(mesh_block.x.size());

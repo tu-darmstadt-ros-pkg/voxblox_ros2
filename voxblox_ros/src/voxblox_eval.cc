@@ -9,8 +9,8 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
-
-#include <pcl_ros/transforms.h>
+#include <pcl/common/transforms.h>
+#include <pcl_ros/transforms.hpp>
 #include <tf2_ros/transform_listener.h>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
@@ -37,12 +37,14 @@ namespace voxblox {
 
 class VoxbloxEvaluator {
  public:
-  VoxbloxEvaluator();
+  explicit VoxbloxEvaluator(const rclcpp::Node::SharedPtr& node);
   void evaluate();
   void visualize();
   bool shouldExit() const { return !visualize_; }
 
  private:
+  rclcpp::Node::SharedPtr node_;
+
   // Whether to do the visualizations (involves generating mesh of the TSDF
   // layer) and keep alive (for visualization) after finishing the eval.
   // Otherwise only outputs the evaluations statistics.
@@ -59,8 +61,8 @@ class VoxbloxEvaluator {
   Transformation T_V_G_;
 
   // Visualization publishers.
-  rclcpp::Publisher mesh_pub_;
-  rclcpp::Publisher gt_ptcloud_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr mesh_pub_;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr gt_ptcloud_pub_;
 
   // Core data to compare.
   std::shared_ptr<Layer<TsdfVoxel>> tsdf_layer_;
@@ -74,24 +76,25 @@ class VoxbloxEvaluator {
   std::shared_ptr<MeshIntegrator<TsdfVoxel>> mesh_integrator_;
 };
 
-VoxbloxEvaluator::VoxbloxEvaluator()
-    : Node("voxblox"),
+VoxbloxEvaluator::VoxbloxEvaluator(const rclcpp::Node::SharedPtr& node)
+    : node_(node),
       visualize_(true),
       recolor_by_error_(false),
       frame_id_("world") {
   // Load parameters.
-  visualize_ = this->declare_parameter("visualize", visualize_);
+  visualize_ = node_->declare_parameter("visualize", visualize_);
   recolor_by_error_ =
-      this->declare_parameter("recolor_by_error", recolor_by_error_);
-  frame_id_ = this->declare_parameter("frame_id", frame_id_);
+      node_->declare_parameter("recolor_by_error", recolor_by_error_);
+  frame_id_ = node_->declare_parameter("frame_id", frame_id_);
 
   // Load transformations.
   // XmlRpc::XmlRpcValue T_V_G_xml;
   // if (this->getParam("T_V_G", T_V_G_xml)) {
   //   kindr::minimal::vectorOfVectorsToKindr(T_V_G_xml, &T_V_G_);
   //   bool invert_static_tranform = false;
-  //   invert_static_tranform = this->declare_parameter("invert_T_V_G",
-  //   invert_static_tranform); if (invert_static_tranform) {
+  //   invert_static_tranform =
+  //       node_->declare_parameter("invert_T_V_G", invert_static_tranform);
+  //   if (invert_static_tranform) {
   //     T_V_G_ = T_V_G_.inverse();
   //   }
   // }
@@ -100,13 +103,13 @@ VoxbloxEvaluator::VoxbloxEvaluator()
   // Just exit if there's any issues here (this is just an evaluation node,
   // after all).
   std::string voxblox_file_path, gt_file_path;
-  voxblox_file_path_ = get_parameter("voxblox_file_path").as_string();
-  CHECK(voxblox_file_path_)
+  voxblox_file_path = node_->get_parameter("voxblox_file_path").as_string();
+  CHECK(!voxblox_file_path.empty())
       << "No file path provided for voxblox map! Set the \"voxblox_file_path\" "
          "param.";
 
-  gt_file_path = get_parameter("gt_file_path").as_string();
-  CHECK(gt_file_path)
+  gt_file_path = node_->get_parameter("gt_file_path").as_string();
+  CHECK(!gt_file_path.empty())
       << "No file path provided for ground truth pointcloud! Set the "
          "\"gt_file_path\" param.";
 
@@ -123,12 +126,12 @@ VoxbloxEvaluator::VoxbloxEvaluator()
   // If doing visualizations, initialize the publishers.
   if (visualize_) {
     mesh_pub_ =
-        this->create_publisher<visualization_msgs::msg::MarkerArray>("mesh", 1);
+        node_->create_publisher<visualization_msgs::msg::MarkerArray>("mesh", 1);
     gt_ptcloud_pub_ =
-        this->create_publisher<sensor_msgs::msg::PointCloud2>("gt_ptcloud", 1);
+        node_->create_publisher<sensor_msgs::msg::PointCloud2>("gt_ptcloud", 1);
 
     std::string color_mode("color");
-    color_mode = this->declare_parameter("color_mode", color_mode);
+    color_mode = node_->declare_parameter("color_mode", color_mode);
     if (color_mode == "color") {
       color_mode_ = ColorMode::kColor;
     } else if (color_mode == "height") {
@@ -257,11 +260,15 @@ int main(int argc, char** argv) {
   // google::ParseCommandLineFlags(&argc, &argv, false);
   google::InstallFailureSignalHandler();
 
-  auto node = std::make_shared<voxblox::VoxbloxEvaluator>();
-  node.evaluate();
+  auto node = std::make_shared<rclcpp::Node>("voxblox_evaluator");
+  voxblox::VoxbloxEvaluator evaluator(node);
 
-  if (!node.shouldExit()) {
+  evaluator.evaluate();
+
+  if (!evaluator.shouldExit()) {
     rclcpp::spin(node);
   }
+
+  rclcpp::shutdown();
   return 0;
 }

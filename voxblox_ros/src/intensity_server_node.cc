@@ -7,9 +7,9 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   // google::ParseCommandLineFlags(&argc, &argv, false);
   google::InstallFailureSignalHandler();
-
-  voxblox::IntensityServer::SharedPtr node =
-      std::make_shared<voxblox::IntensityServer::SharedPtr>();
+  auto node = std::make_shared<rclcpp::Node>("intensity_server_node");
+  auto intensity_server =
+      std::make_shared<voxblox::IntensityServer>(node);
   rclcpp::spin(node);
   return 0;
 }

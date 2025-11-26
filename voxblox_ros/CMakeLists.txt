@@ -21,6 +21,7 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_eigen REQUIRED)
 find_package(tf2_eigen_kdl REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 find_package(voxblox REQUIRED)
 find_package(voxblox_proto REQUIRED)
@@ -33,17 +34,15 @@ ament_auto_find_build_dependencies()
 
 set(AMENT_DEPENDENCIES
     rclcpp
-
+    cv_bridge
     std_srvs
     visualization_msgs
     sensor_msgs
     geometry_msgs
     tf2_geometry_msgs
-
     voxblox
     voxblox_proto
     voxblox_msgs
-
     tf2
     tf2_ros
     pcl_ros
@@ -66,8 +65,8 @@ set(OTHER_DEPENDENCIES
 
 ament_auto_add_library(${PROJECT_NAME}
   src/esdf_server.cc
-  # src/interactive_slider.cc
-  # src/intensity_server.cc
+  src/interactive_slider.cc
+  src/intensity_server.cc
   src/transformer.cc
   src/tsdf_server.cc
 )
@@ -84,12 +83,11 @@ target_link_libraries(${PROJECT_NAME}
 # BINARIES #
 ############
 
-# TODO: Add other executables and fix their ROS2 migration errors
 
-# ament_auto_add_executable(voxblox_eval
-#   src/voxblox_eval.cc
-# )
-# target_link_libraries(voxblox_eval ${PROJECT_NAME})
+ament_auto_add_executable(voxblox_eval
+  src/voxblox_eval.cc
+)
+target_link_libraries(voxblox_eval ${PROJECT_NAME})
 
 # TSDF_SERVER:
 ament_auto_add_executable(tsdf_server
@@ -107,15 +105,15 @@ target_link_libraries(esdf_server
   ${PROJECT_NAME}
 )
 
-# ament_auto_add_executable(intensity_server
-#   src/intensity_server_node.cc
-# )
-# target_link_libraries(intensity_server ${PROJECT_NAME})
+ament_auto_add_executable(intensity_server
+  src/intensity_server_node.cc
+)
+target_link_libraries(intensity_server ${PROJECT_NAME})
 
-# ament_auto_add_executable(visualize_tsdf
-#   src/visualize_tsdf.cc
-# )
-# target_link_libraries(visualize_tsdf ${PROJECT_NAME})
+ament_auto_add_executable(visualize_tsdf
+  src/visualize_tsdf.cc
+)
+ target_link_libraries(visualize_tsdf ${PROJECT_NAME})
 
 
 ##########

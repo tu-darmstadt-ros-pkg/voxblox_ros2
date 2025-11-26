@@ -2,8 +2,8 @@
 
 namespace voxblox {
 
-IntensityServer::IntensityServer()
-    : TsdfServer(), focal_length_px_(400.0f), subsample_factor_(12) {
+IntensityServer::IntensityServer(rclcpp::Node::SharedPtr node)
+    : TsdfServer(node), focal_length_px_(400.0f), subsample_factor_(12) {
   cache_mesh_ = true;
 
   intensity_layer_.reset(
@@ -14,36 +14,36 @@ IntensityServer::IntensityServer()
 
   // Get ROS params:
   focal_length_px_ =
-      this->declare_parameter("intensity_focal_length", focal_length_px_);
+      node_->declare_parameter("intensity_focal_length", focal_length_px_);
   subsample_factor_ =
-      this->declare_parameter("subsample_factor", subsample_factor_);
+      node_->declare_parameter("subsample_factor", subsample_factor_);
 
   float intensity_min_value = 10.0f;
   float intensity_max_value = 40.0f;
   intensity_min_value =
-      this->declare_parameter("intensity_min_value", intensity_min_value);
+      node_->declare_parameter("intensity_min_value", intensity_min_value);
   intensity_max_value =
-      this->declare_parameter("intensity_max_value", intensity_max_value);
+      node_->declare_parameter("intensity_max_value", intensity_max_value);
 
   FloatingPoint intensity_max_distance =
       intensity_integrator_->getMaxDistance();
   intensity_max_distance =
-      this->declare_parameter("intensity_max_distance", intensity_max_distance);
+      node_->declare_parameter("intensity_max_distance", intensity_max_distance);
   intensity_integrator_->setMaxDistance(intensity_max_distance);
 
   // Publishers for output.
   intensity_pointcloud_pub_ =
-      this->create_publisher<sensor_msgs::msg::PointCloud2>(
+      node_->create_publisher<sensor_msgs::msg::PointCloud2>(
           "intensity_pointcloud", 1);
   intensity_mesh_pub_ =
-      this->create_publisher<voxblox_msgs::msg::Mesh>("intensity_mesh", 1);
+      node_->create_publisher<voxblox_msgs::msg::Mesh>("intensity_mesh", 1);
 
   color_map_.reset(new IronbowColorMap());
   color_map_->setMinValue(intensity_min_value);
   color_map_->setMaxValue(intensity_max_value);
 
   // Set up subscriber.
-  intensity_image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
+  intensity_image_sub_ = node_->create_subscription<sensor_msgs::msg::Image>(
       "intensity_image", 1,
       std::bind(&IntensityServer::intensityImageCallback, this,
                 std::placeholders::_1));
@@ -85,7 +85,7 @@ void IntensityServer::intensityImageCallback(
   Transformation T_G_C;
   if (!transformer_.lookupTransform(image->header.frame_id, world_frame_,
                                     image->header.stamp, &T_G_C)) {
-    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 10,
+    RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 10,
                          "Failed to look up intensity transform!");
     return;
   }

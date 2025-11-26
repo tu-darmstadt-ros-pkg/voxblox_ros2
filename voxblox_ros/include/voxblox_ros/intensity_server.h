@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 #include <sensor_msgs/msg/image.hpp>
 
 #include <voxblox/core/voxel.h>
@@ -19,7 +19,7 @@ class IntensityServer : public TsdfServer {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  IntensityServer();
+  explicit IntensityServer(rclcpp::Node::SharedPtr node);
   virtual ~IntensityServer() {}
 
   virtual void updateMesh();
