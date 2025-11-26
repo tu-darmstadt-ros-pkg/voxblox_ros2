@@ -54,8 +54,8 @@ jobs:
           sudo apt-get install -y ros-dev-tools
       - uses: actions/checkout@v4
         with:
-          repository: tu-darmstadt-ros-pkg/hector_ros2_utils
-          path: src/hector_ros2_utils
+          repository: tu-darmstadt-ros-pkg/eigen_checks
+          path: src/eigen_checks
       - uses: actions/checkout@v4
         with:
           path: src/repo
