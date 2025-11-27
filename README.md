@@ -1,7 +1,6 @@
 # Voxblox for ROS2
 
-[![Build Test](https://https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yml/badge.svg)](https://https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yml)
-
+[![Build Test](https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yaml/badge.svg)](https://github.com/tu-darmstadt-ros-pkg/voxblox_ros2/actions/workflows/lint_build_test.yaml)
 ![voxblox_small](https://cloud.githubusercontent.com/assets/5616392/15180357/536a8776-1781-11e6-8c1d-f2dfa34b1408.gif)
 
 Voxblox is a volumetric mapping library based mainly on Truncated Signed Distance Fields (TSDFs). It varies from other SDF libraries in the following ways:

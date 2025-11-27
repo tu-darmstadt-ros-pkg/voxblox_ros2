@@ -26,11 +26,12 @@ TEST_F(TsdfMapTest, BlockAllocation) {
   EXPECT_EQ(0, map_->getTsdfLayer().getNumberOfAllocatedBlocks());
   map_->getTsdfLayerPtr()->allocateNewBlockByCoordinates(Point(0.0, 0.15, 0.0));
   EXPECT_EQ(1, map_->getTsdfLayerPtr()->getNumberOfAllocatedBlocks());
-  map_->getTsdfLayerPtr()->allocateNewBlockByCoordinates(Point(0.0, 0.13, 0.0));
-  EXPECT_EQ(1, map_->getTsdfLayerPtr()->getNumberOfAllocatedBlocks());
+  map_->getTsdfLayerPtr()->allocateNewBlockByCoordinates(
+      Point(0.0, -0.15, 0.0));
+  EXPECT_EQ(2, map_->getTsdfLayerPtr()->getNumberOfAllocatedBlocks());
   map_->getTsdfLayerPtr()->allocateNewBlockByCoordinates(
       Point(-10.0, 13.5, 20.0));
-  EXPECT_EQ(2, map_->getTsdfLayerPtr()->getNumberOfAllocatedBlocks());
+  EXPECT_EQ(3, map_->getTsdfLayerPtr()->getNumberOfAllocatedBlocks());
 }
 
 TEST_F(TsdfMapTest, IndexLookups) {
