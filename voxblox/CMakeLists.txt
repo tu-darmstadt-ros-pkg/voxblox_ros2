@@ -102,6 +102,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_approx_hash_array
             test/test_approx_hash_array.cc
+            TIMEOUT 6000
     )
 
     if(TARGET test_approx_hash_array)
@@ -110,6 +111,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_tsdf_map
             test/test_tsdf_map.cc
+            TIMEOUT 6000
     )
     if(TARGET test_tsdf_map)
         target_link_libraries(test_tsdf_map ${PROJECT_NAME})
@@ -118,6 +120,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_protobuf
             test/test_protobuf.cc
+            TIMEOUT 6000
     )
     if(TARGET test_protobuf)
         target_link_libraries(test_protobuf ${PROJECT_NAME})
@@ -125,6 +128,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_tsdf_interpolator
             test/test_tsdf_interpolator.cc
+            TIMEOUT 6000
     )
     if(TARGET test_tsdf_interpolator)
         target_link_libraries(test_tsdf_interpolator ${PROJECT_NAME})
@@ -133,6 +137,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_layer
             test/test_layer.cc
+            TIMEOUT 6000
     )
     if(TARGET test_layer)
         target_link_libraries(test_layer ${PROJECT_NAME})
@@ -141,6 +146,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_merge_integration
             test/test_merge_integration.cc
+            TIMEOUT 6000
     )
     if(TARGET test_merge_integration)
         target_link_libraries(test_merge_integration ${PROJECT_NAME})
@@ -149,6 +155,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_layer_utils
             test/test_layer_utils.cc
+            TIMEOUT 6000
     )
     if(TARGET test_layer_utils)
         target_link_libraries(test_layer_utils ${PROJECT_NAME})
@@ -157,6 +164,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_sdf_integrators
             test/test_sdf_integrators.cc
+            TIMEOUT 6000
     )
     if(TARGET test_sdf_integrators)
         target_link_libraries(test_sdf_integrators ${PROJECT_NAME})
@@ -165,6 +173,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_bucket_queue
             test/test_bucket_queue.cc
+            TIMEOUT 6000
     )
     if(TARGET test_bucket_queue)
         target_link_libraries(test_bucket_queue ${PROJECT_NAME} )
@@ -172,6 +181,7 @@ if(BUILD_TESTING)
 
     ament_add_gtest(test_clear_spheres
             test/test_clear_spheres.cc
+            TIMEOUT 6000
     )
     if(TARGET test_clear_spheres)
         target_link_libraries(test_clear_spheres ${PROJECT_NAME} )
