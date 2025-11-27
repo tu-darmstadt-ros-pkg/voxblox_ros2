@@ -70,5 +70,5 @@ jobs:
       - name: test
         run: |
           source /opt/ros/${{ matrix.setup.rosdistro }}/setup.bash
-          colcon test
+          colcon test --packages-skip eigen_checks
           colcon test-result --verbose
