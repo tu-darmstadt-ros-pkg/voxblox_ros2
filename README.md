@@ -41,6 +41,32 @@ The following work still needs to be completed:
 
 # Documentation
 * All voxblox documentation can be found on [our readthedocs page](https://voxblox.readthedocs.io/en/latest/index.html)
+### Modifications besides ROS2 migration
+  * subscribe to several point cloud topics without needing to relay them on a single topic
+  * example launch file:
+    ```yaml
+    - node:
+      pkg: voxblox_ros
+      exec: esdf_server
+      name: esdf_server
+      output: screen
+      respawn: "true"
+
+      param:
+        - from: "$(find-pkg-share athena_software_launch)/configs/voxblox.yaml"
+        - name: num_pointcloud_subs
+          value: 4
+
+      remap:
+        - from: pointcloud_1
+          to: front_rgbd/points
+        - from: pointcloud_2
+          to: back_rgbd/points
+        - from: pointcloud_3
+          to: back_lidar/self_filter/filtered
+        - from: pointcloud_4
+          to: front_lidar/self_filter/filtered
+    ```
 
 ## Table of Contents
 * [Paper and Video](#paper-and-video)

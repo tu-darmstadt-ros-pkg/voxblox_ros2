@@ -27,7 +27,8 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
       enable_icp_(false),
       accumulate_icp_corrections_(true),
       pointcloud_queue_size_(1),
-      num_subscribers_tsdf_map_(0) {
+      num_subscribers_tsdf_map_(0),
+      num_pointcloud_subs_(1) {
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*node_);
 
   tsdf_config = getTsdfMapConfigFromRosParam();
@@ -49,9 +50,24 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
   tsdf_slice_pub_ =
       node_->create_publisher<sensor_msgs::msg::PointCloud2>("tsdf_slice", 1);
 
-  pointcloud_sub_ = node_->create_subscription<sensor_msgs::msg::PointCloud2>(
-      "pointcloud", rclcpp::QoS(pointcloud_queue_size_).best_effort(),
-      std::bind(&TsdfServer::insertPointcloud, this, std::placeholders::_1));
+  for (int i = 0; i < std::max(1, num_pointcloud_subs_); ++i) {
+    const int topic_index = i;
+
+    pointcloud_subs_.push_back(
+        node_->create_subscription<sensor_msgs::msg::PointCloud2>(
+            "pointcloud_" + std::to_string(topic_index + 1),
+            rclcpp::QoS(pointcloud_queue_size_).best_effort(),
+            [this,
+             topic_index](const sensor_msgs::msg::PointCloud2::SharedPtr msg) {
+              insertPointcloud(msg, topic_index);
+            }));
+
+    RCLCPP_WARN_STREAM(node_->get_logger(),
+                       "Subscribing to topic pointcloud_" << (topic_index + 1));
+
+    last_msg_times_ptcloud_.push_back(
+        rclcpp::Time(0, 0, node_->get_clock()->get_clock_type()));
+  }
 
   mesh_pub_ = node_->create_publisher<voxblox_msgs::msg::Mesh>("mesh", 1);
 
@@ -164,7 +180,8 @@ void TsdfServer::getServerConfigFromRosParam() {
       "min_time_between_msgs_sec", min_time_between_msgs_sec_);
   min_time_between_msgs_ =
       rclcpp::Duration::from_seconds(min_time_between_msgs_sec_);
-
+  num_pointcloud_subs_ =
+      node_->declare_parameter("num_pointcloud_subs", num_pointcloud_subs_);
   max_block_distance_from_body_ = node_->declare_parameter(
       "max_block_distance_from_body", max_block_distance_from_body_);
   slice_level_ = node_->declare_parameter("slice_level", slice_level_);
@@ -323,7 +340,7 @@ void TsdfServer::processPointCloudMessageAndInsert(
   rclcpp::Time start = rclcpp::Clock().now();
   integratePointcloud(T_G_C_refined, points_C, colors, is_freespace_pointcloud);
   rclcpp::Time end = rclcpp::Clock().now();
-  auto integrating_time = (start - end);
+  auto integrating_time = (end - start);
   if (verbose_) {
     RCLCPP_INFO(node_->get_logger(),
                 "Finished integrating in %f seconds, have %lu blocks.",
@@ -373,18 +390,19 @@ bool TsdfServer::getNextPointcloudFromQueue(
 }
 
 void TsdfServer::insertPointcloud(
-    const sensor_msgs::msg::PointCloud2::SharedPtr pointcloud_msg_in) {
+    const sensor_msgs::msg::PointCloud2::SharedPtr pointcloud_msg_in,
+    int topic_index) {
   rclcpp::Time current_msg_time = pointcloud_msg_in->header.stamp;
-  if (last_msg_time_ptcloud_.get_clock_type() !=
+  if (last_msg_times_ptcloud_[topic_index].get_clock_type() !=
       current_msg_time.get_clock_type()) {  // TODO: figure out how to remove
                                             // this check at every iteration
-    last_msg_time_ptcloud_ = current_msg_time;
+    last_msg_times_ptcloud_[topic_index] = current_msg_time;
   }
   rclcpp::Duration time_since_last_message =
-      (current_msg_time - last_msg_time_ptcloud_);
+      (current_msg_time - last_msg_times_ptcloud_[topic_index]);
 
   if (time_since_last_message > min_time_between_msgs_) {
-    last_msg_time_ptcloud_ = (pointcloud_msg_in->header.stamp);
+    last_msg_times_ptcloud_[topic_index] = (pointcloud_msg_in->header.stamp);
     // So we have to process the queue anyway... Push this back.
     pointcloud_queue_.push(pointcloud_msg_in);
   }

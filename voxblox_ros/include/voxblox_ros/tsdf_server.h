@@ -43,7 +43,8 @@ class TsdfServer {
   void getServerConfigFromRosParam();
 
   void insertPointcloud(
-      const sensor_msgs::msg::PointCloud2::SharedPtr pointcloud);
+      const sensor_msgs::msg::PointCloud2::SharedPtr pointcloud,
+      int topic_index);
 
   void insertFreespacePointcloud(
       const sensor_msgs::msg::PointCloud2::SharedPtr pointcloud);
@@ -242,8 +243,8 @@ class TsdfServer {
       Transformation* T_G_C);
 
   /// Data subscribers.
-  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr
-      pointcloud_sub_;
+  std::vector<rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr>
+      pointcloud_subs_;
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr
       freespace_pointcloud_sub_;
 
@@ -353,6 +354,7 @@ class TsdfServer {
   /// Subscriber settings.
   int pointcloud_queue_size_;
   int num_subscribers_tsdf_map_;
+  int num_pointcloud_subs_;
 
   // Maps and integrators.
   std::shared_ptr<TsdfMap> tsdf_map_;
@@ -376,6 +378,7 @@ class TsdfServer {
       freespace_pointcloud_queue_;
 
   // Last message times for throttling input.
+  std::vector<rclcpp::Time> last_msg_times_ptcloud_;
   rclcpp::Time last_msg_time_ptcloud_;
   rclcpp::Time last_msg_time_freespace_ptcloud_;
 
