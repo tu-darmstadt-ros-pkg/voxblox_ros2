@@ -61,13 +61,13 @@ set(${PROJECT_NAME}_SRCS
 # LIBRARIES #
 #############
 
-ament_auto_add_library(${PROJECT_NAME}
+ament_auto_add_library(${PROJECT_NAME} SHARED
   ${${PROJECT_NAME}_SRCS}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  ${voxblox_proto_LIBRARIES}
-  glog::glog
+    glog::glog
+    ${voxblox_proto_LIBRARIES}
 )
 
 ############
@@ -193,5 +193,8 @@ endif()  # BUILD_TESTING
 ##########
 # EXPORT #
 ##########
-
+ament_export_dependencies(
+  glog
+  voxblox_proto
+)
 ament_auto_package()

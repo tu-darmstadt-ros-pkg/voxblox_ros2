@@ -65,7 +65,7 @@ set(OTHER_DEPENDENCIES
 # LIBRARIES #
 #############
 
-ament_auto_add_library(${PROJECT_NAME}
+ament_auto_add_library(${PROJECT_NAME} SHARED
   src/esdf_server.cc
   src/interactive_slider.cc
   src/intensity_server.cc

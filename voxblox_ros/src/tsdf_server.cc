@@ -3,6 +3,8 @@
 #include <minkindr_conversions/kindr_msg.h>
 #include <minkindr_conversions/kindr_tf.h>
 
+#include <memory>
+
 #include "voxblox_ros/conversions.h"
 #include "voxblox_ros/node_helper.h"
 
@@ -120,12 +122,12 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
         tsdf_integrator_config, tsdf_map_->getTsdfLayerPtr()));
   }
 
-  mesh_layer_.reset(new MeshLayer(tsdf_map_->block_size()));
+  mesh_layer_ = std::make_shared<MeshLayer>(tsdf_map_->block_size());
 
-  mesh_integrator_.reset(new MeshIntegrator<TsdfVoxel>(
-      mesh_config, tsdf_map_->getTsdfLayerPtr(), mesh_layer_.get()));
+  mesh_integrator_ = std::make_unique<MeshIntegrator<TsdfVoxel>>(
+      mesh_config, tsdf_map_->getTsdfLayerPtr(), mesh_layer_.get());
 
-  icp_.reset(new ICP(getICPConfigFromRosParam()));
+  icp_ = std::make_shared<ICP>(getICPConfigFromRosParam());
 
   // Advertise services.
 
@@ -369,21 +371,35 @@ bool TsdfServer::getNextPointcloudFromQueue(
     return false;
   }
   *pointcloud_msg = queue->front();
-  if (transformer_.lookupTransform((*pointcloud_msg)->header.frame_id,
-                                   world_frame_,
-                                   (*pointcloud_msg)->header.stamp, T_G_C)) {
+  const bool transform_ok = transformer_.lookupTransform(
+      (*pointcloud_msg)->header.frame_id, world_frame_,
+      (*pointcloud_msg)->header.stamp, T_G_C);
+  if (transform_ok) {
     queue->pop();
     return true;
-  } else {
-    if (queue->size() >= kMaxQueueSize) {
-      RCLCPP_ERROR_THROTTLE(
-          node_->get_logger(), *node_->get_clock(), 60,
-          "Input pointcloud queue getting too long! Dropping "
-          "some pointclouds. Either unable to look up transform "
-          "timestamps or the processing is taking too long.");
-      while (queue->size() >= kMaxQueueSize) {
-        queue->pop();
-      }
+  }
+  if (queue->size() >= kMaxQueueSize) {
+    // The queue overflowed. There are two distinct causes; report which one so
+    // the user does not have to guess:
+    //   1) the FRONT message's transform can't be looked up (missing/expired TF
+    //      for its frame_id at its stamp) -> it never pops and the queue grows.
+    //      This is the usual cause; print the offending frame + stamp so a TF
+    //      or timing problem is immediately actionable.
+    //   2) transforms succeed but integration can't keep up with the input
+    //   rate.
+    // Since the front transform just failed here, (1) is what blocked the
+    // queue.
+    const rclcpp::Time front_stamp((*pointcloud_msg)->header.stamp);
+    RCLCPP_ERROR_THROTTLE(
+        node_->get_logger(), *node_->get_clock(), 60,
+        "Input pointcloud queue overflowed (%zu msgs) and is being dropped: "
+        "could not look up transform '%s' -> '%s' at the front cloud's stamp "
+        "%.3fs. Check that this TF is published and covers the cloud "
+        "timestamps (clock/TF sync, or set the cloud frame_id correctly).",
+        queue->size(), (*pointcloud_msg)->header.frame_id.c_str(),
+        world_frame_.c_str(), front_stamp.seconds());
+    while (queue->size() >= kMaxQueueSize) {
+      queue->pop();
     }
   }
   return false;
