@@ -25,7 +25,7 @@ set(PROTO_FILES
 # Generate C++ headers from .proto files
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 
-ament_auto_add_library(${PROJECT_NAME}
+ament_auto_add_library(${PROJECT_NAME} SHARED
   ${PROTO_SRCS}
   ${PROTO_HDRS}
 )
