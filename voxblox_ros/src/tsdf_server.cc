@@ -78,7 +78,7 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
   tsdf_map_pub_ =
       node_->create_publisher<voxblox_msgs::msg::Layer>("tsdf_map_out", 1);
   tsdf_map_sub_ = node_->create_subscription<voxblox_msgs::msg::Layer>(
-      "tsdf_map_in", 1,
+      "tsdf_map_in", 10,
       std::bind(&TsdfServer::tsdfMapCallback, this, std::placeholders::_1));
   publish_tsdf_map_ =
       node_->declare_parameter("publish_tsdf_map", publish_tsdf_map_);
