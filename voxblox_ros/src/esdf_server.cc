@@ -43,7 +43,7 @@ void EsdfServer::setupRos() {
 
   // Set up subscriber.
   esdf_map_sub_ = node_->create_subscription<voxblox_msgs::msg::Layer>(
-      "esdf_map_in", 1,
+      "esdf_map_in", 10,
       std::bind(&EsdfServer::esdfMapCallback, this, std::placeholders::_1));
 
   // Whether to clear each new pose as it comes in, and then set a sphere
