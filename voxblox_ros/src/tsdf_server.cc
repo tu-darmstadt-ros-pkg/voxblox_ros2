@@ -29,6 +29,7 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
       enable_icp_(false),
       accumulate_icp_corrections_(true),
       pointcloud_queue_size_(1),
+      layer_queue_size_(10),
       num_subscribers_tsdf_map_(0),
       num_pointcloud_subs_(1) {
   tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*node_);
@@ -78,7 +79,7 @@ TsdfServer::TsdfServer(rclcpp::Node::SharedPtr node)
   tsdf_map_pub_ =
       node_->create_publisher<voxblox_msgs::msg::Layer>("tsdf_map_out", 1);
   tsdf_map_sub_ = node_->create_subscription<voxblox_msgs::msg::Layer>(
-      "tsdf_map_in", 10,
+      "tsdf_map_in", layer_queue_size_,
       std::bind(&TsdfServer::tsdfMapCallback, this, std::placeholders::_1));
   publish_tsdf_map_ =
       node_->declare_parameter("publish_tsdf_map", publish_tsdf_map_);
@@ -198,6 +199,8 @@ void TsdfServer::getServerConfigFromRosParam() {
       "use_freespace_pointcloud", use_freespace_pointcloud_);
   pointcloud_queue_size_ =
       node_->declare_parameter("pointcloud_queue_size", pointcloud_queue_size_);
+  layer_queue_size_ =
+      node_->declare_parameter("layer_queue_size", layer_queue_size_);
   enable_icp_ = node_->declare_parameter("enable_icp", enable_icp_);
   accumulate_icp_corrections_ = node_->declare_parameter(
       "accumulate_icp_corrections", accumulate_icp_corrections_);

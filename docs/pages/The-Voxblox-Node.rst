@@ -103,6 +103,8 @@ General Parameters
   Minimum time to wait after integrating a message before accepting a new one.
 ``pointcloud_queue_size`` `1`
   The size of the queue used to subscribe to pointclouds.
+``layer_queue_size`` `10`
+  The size of the queues of ``esdf_map_in`` and ``tsdf_map_in``. A layer that arrives split into more messages than this loses its first parts.
 ``verbose`` `true`
   Prints additional debug and timing information.
 ``max_block_distance_from_body`` `3.40282e+38`

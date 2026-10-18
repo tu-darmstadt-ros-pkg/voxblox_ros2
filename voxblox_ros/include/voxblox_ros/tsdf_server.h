@@ -353,6 +353,9 @@ class TsdfServer {
 
   /// Subscriber settings.
   int pointcloud_queue_size_;
+  /// Messages kept on esdf_map_in and tsdf_map_in, a layer split into more
+  /// messages needs more
+  int layer_queue_size_;
   int num_subscribers_tsdf_map_;
   int num_pointcloud_subs_;
 
