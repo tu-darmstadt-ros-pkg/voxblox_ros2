@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(voxblox_ros)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 add_definitions(-Wall -Wextra)
 
 set(AMENT_ENABLE_TESTING 0)
@@ -33,32 +33,9 @@ find_package(glog REQUIRED)
 
 ament_auto_find_build_dependencies()
 
-set(AMENT_DEPENDENCIES
-    rclcpp
-    cv_bridge
-    std_srvs
-    visualization_msgs
-    sensor_msgs
-    geometry_msgs
-    tf2_geometry_msgs
-    voxblox
-    voxblox_proto
-    voxblox_msgs
-    tf2
-    tf2_ros
-    pcl_ros
-    pcl_conversions
-    tf2_eigen
-    tf2_eigen_kdl
-    minkindr_conversions
-
-    glog
-    Eigen3
-)
-
 set(OTHER_DEPENDENCIES
   glog::glog
-  Eigen3::Eigen3
+  Eigen3::Eigen
 )
 
 #############
@@ -72,10 +49,6 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
   src/simulation_server.cc
   src/transformer.cc
   src/tsdf_server.cc
-)
-
-ament_target_dependencies(${PROJECT_NAME}
-  ${AMENT_DEPENDENCIES}
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(voxblox)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 add_definitions(-Wall -Wextra)
 
 set(AMENT_ENABLE_TESTING 0)
@@ -94,7 +94,7 @@ if(BUILD_TESTING)
     find_package(eigen_checks REQUIRED)
     # Replicate the test_data target (same commands as before)
     add_custom_target(test_data)
-    add_custom_command(TARGET test_data
+    add_custom_command(TARGET test_data POST_BUILD
             COMMAND rm -rf test_data
             COMMAND mkdir -p test_data
             COMMAND cp -r ${CMAKE_SOURCE_DIR}/test/test_data/* test_data/ || :
@@ -115,7 +115,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_tsdf_map)
         target_link_libraries(test_tsdf_map ${PROJECT_NAME})
-        ament_target_dependencies(test_tsdf_map eigen_checks)
+        target_link_libraries(test_tsdf_map eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_protobuf
@@ -132,7 +132,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_tsdf_interpolator)
         target_link_libraries(test_tsdf_interpolator ${PROJECT_NAME})
-        ament_target_dependencies(test_tsdf_interpolator eigen_checks)
+        target_link_libraries(test_tsdf_interpolator eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_layer
@@ -141,7 +141,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_layer)
         target_link_libraries(test_layer ${PROJECT_NAME})
-        ament_target_dependencies(test_layer eigen_checks)
+        target_link_libraries(test_layer eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_merge_integration
@@ -150,7 +150,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_merge_integration)
         target_link_libraries(test_merge_integration ${PROJECT_NAME})
-        ament_target_dependencies(test_merge_integration eigen_checks)
+        target_link_libraries(test_merge_integration eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_layer_utils
@@ -159,7 +159,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_layer_utils)
         target_link_libraries(test_layer_utils ${PROJECT_NAME})
-        ament_target_dependencies(test_layer_utils eigen_checks)
+        target_link_libraries(test_layer_utils eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_sdf_integrators
@@ -168,7 +168,7 @@ if(BUILD_TESTING)
     )
     if(TARGET test_sdf_integrators)
         target_link_libraries(test_sdf_integrators ${PROJECT_NAME})
-        ament_target_dependencies(test_sdf_integrators eigen_checks)
+        target_link_libraries(test_sdf_integrators eigen_checks::eigen_checks)
     endif()
 
     ament_add_gtest(test_bucket_queue

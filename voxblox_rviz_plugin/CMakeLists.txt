@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 project(voxblox_rviz_plugin)
 
 find_package(ament_cmake REQUIRED)
@@ -9,8 +9,9 @@ find_package(rviz2 REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_ogre_vendor REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(glog REQUIRED)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MACOSX_RPATH 0)
 set(OGRE_PLUGIN_PATH "rviz_ogre_vendor")
 
@@ -19,13 +20,17 @@ add_definitions(-Wall)
 ## This setting causes Qt's "MOC" generation to happen automatically.
 set(CMAKE_AUTOMOC ON)
 
-message(STATUS "Using Qt5 based on the rviz_QT_VERSION: ${rviz_QT_VERSION}")
-find_package(Qt5 REQUIRED Core Widgets)
+## Use the same Qt major version as rviz_common (Qt6 on Lyrical+, Qt5 on Jazzy)
+## rviz_common already pulled in its Qt, so follow that instead of guessing.
+if(TARGET Qt6::Widgets)
+  set(QT_VERSION_MAJOR 6)
+else()
+  set(QT_VERSION_MAJOR 5)
+endif()
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
+message(STATUS "Using Qt${QT_VERSION_MAJOR}")
 ## make target_link_libraries(${QT_LIBRARIES}) pull in all required dependencies
-set(QT_LIBRARIES Qt5::Widgets)
-QT5_WRAP_CPP(MOC_FILES
-  ${INCLUDE_FILES_QT}
-)
+set(QT_LIBRARIES Qt${QT_VERSION_MAJOR}::Widgets)
 
 ## Avoid Qt signals and slots defining "emit", "slots", etc.
 add_definitions(-DQT_NO_KEYWORDS)
@@ -44,20 +49,12 @@ add_library(${PROJECT_NAME}
   SHARED
   ${SRC_FILES}
   ${HEADER_FILES}
-  ${MOC_FILES}
-)
-
-ament_target_dependencies(${PROJECT_NAME}
-  voxblox
-  voxblox_msgs
-  rviz_common
-  rviz_ogre_vendor
 )
 
 target_include_directories(${PROJECT_NAME}  PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-  ${Qt5Widgets_INCLUDE_DIRS}
+  ${voxblox_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -65,7 +62,8 @@ target_link_libraries(${PROJECT_NAME}
   rviz_common::rviz_common
   rviz_ogre_vendor::OgreMain
   rviz_ogre_vendor::OgreOverlay
-  ${voxblox_TARGETS}
+  ${voxblox_LIBRARIES}
+  glog::glog
   ${voxblox_msgs_TARGETS}
 )
 
@@ -77,7 +75,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE "VOXBLOX_RVIZ_PLUGIN_BUILDING
 
 ament_export_dependencies(
   pluginlib
-  Qt5
+  Qt${QT_VERSION_MAJOR}
   rclcpp
   rviz_ogre_vendor
   voxblox_msgs
