@@ -3,7 +3,7 @@
 #include <OgreSceneManager.h>
 #include <OgreSceneNode.h>
 
-#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/transform_listener.hpp>
 
 #include <rviz_common/ros_integration/ros_node_abstraction.hpp>
 #include <rviz_common/visualization_manager.hpp>

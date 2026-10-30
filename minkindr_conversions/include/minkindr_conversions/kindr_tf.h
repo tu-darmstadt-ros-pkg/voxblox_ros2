@@ -4,7 +4,11 @@
 #define MINKINDR_CONVERSIONS_KINDR_TF_H
 
 #include <kindr/minimal/quat-transformation.h>
+#if __has_include(<tf2/transform_datatypes.hpp>)
+#include <tf2/transform_datatypes.hpp>
+#else
 #include <tf2/transform_datatypes.h>
+#endif
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
